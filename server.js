@@ -8,9 +8,22 @@ const db = require("./db");
 const dailyRateRoutes = require("./routes/dailyRate.routes");
 const jewelleryRoutes = require("./routes/jewellery.routes");
 
-
 const app = express();
-app.use(cors());
+
+// ----------------------------
+// CORS FIX FOR VERSEL FRONTEND
+// ----------------------------
+app.use(
+  cors({
+    origin: ["https://jewellery-bill-frontend.vercel.app"], // your frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
+
+// If you want to test locally also, uncomment this:
+// app.use(cors());  // Allow all origins during development
+
 app.use(bodyParser.json());
 
 // Register routes
@@ -38,8 +51,6 @@ cron.schedule("*/1 * * * *", async () => {
     );
   }
 });
-
-
 
 // ----------------------------
 app.listen(3000, () => {
