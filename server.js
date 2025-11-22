@@ -8,7 +8,9 @@ const jewelleryRoutes = require("./routes/jewellery.routes");
 
 const app = express();
 
-
+// ------------------------------------
+// CORS FIX (works for Vercel + Localhost)
+// ------------------------------------
 const allowedOrigins = [
   "https://jewellery-bill-frontend.vercel.app",
   "http://localhost:4200"
@@ -28,17 +30,21 @@ app.use(
   })
 );
 
-// ------------------------------------
-// Body parser
-// ------------------------------------
+// Body Parser
 app.use(bodyParser.json());
 
 // ------------------------------------
-// API Routes
+// Route Mounting
 // ------------------------------------
 app.use("/api/daily-rate", dailyRateRoutes);
-app.use("/api", jewelleryRoutes);   // changed to /api/items for consistency
 
+// IMPORTANT FIX:
+// This makes GET /api/items work correctly
+app.use("/api/items", jewelleryRoutes);
+
+// ------------------------------------
+// PORT for Render Deployment
+// ------------------------------------
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

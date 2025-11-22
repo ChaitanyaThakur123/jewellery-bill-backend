@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-// Get rate for today's date
+// Get rate for today
 router.get("/get-rate/:metal/:date", (req, res) => {
   const { metal, date } = req.params;
 
@@ -21,7 +21,7 @@ router.get("/get-rate/:metal/:date", (req, res) => {
   );
 });
 
-// Save/update today rate
+// Set/update rate
 router.post("/set-rate", (req, res) => {
   const { metal, rate, date } = req.body;
 
