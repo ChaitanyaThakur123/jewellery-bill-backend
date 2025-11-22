@@ -8,23 +8,39 @@ const jewelleryRoutes = require("./routes/jewellery.routes");
 
 const app = express();
 
+
+const allowedOrigins = [
+  "https://jewellery-bill-frontend.vercel.app",
+  "http://localhost:4200"
+];
+
 app.use(
   cors({
-    origin: ["https://jewellery-bill-frontend.vercel.app"], // your frontend URL
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS blocked: " + origin));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 
+// ------------------------------------
+// Body parser
+// ------------------------------------
 app.use(bodyParser.json());
 
-// Register routes
+// ------------------------------------
+// API Routes
+// ------------------------------------
 app.use("/api/daily-rate", dailyRateRoutes);
-app.use("/", jewelleryRoutes);
+app.use("/api", jewelleryRoutes);   // changed to /api/items for consistency
 
+const PORT = process.env.PORT || 3000;
 
-
-// ----------------------------
-app.listen(3000, () => {
-  console.log("Backend running on http://localhost:3000");
+app.listen(PORT, () => {
+  console.log(`Backend running on port ${PORT}`);
 });
