@@ -8,45 +8,27 @@ const jewelleryRoutes = require("./routes/jewellery.routes");
 
 const app = express();
 
-// ------------------------------------
-// CORS FIX (works for Vercel + Localhost)
-// ------------------------------------
-const allowedOrigins = [
-  "https://jewellery-bill-frontend.vercel.app",
-  "http://localhost:4200"
-];
-
+// ------------ CORS FIX (FINAL) -----------------
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("CORS blocked: " + origin));
-      }
-    },
+    origin: "*", // allow ALL for now to test
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 
-// Body Parser
+// Body parser
 app.use(bodyParser.json());
 
-// ------------------------------------
-// Route Mounting
-// ------------------------------------
+// API Routes
 app.use("/api/daily-rate", dailyRateRoutes);
+app.use("/api", jewelleryRoutes);
 
-// IMPORTANT FIX:
-// This makes GET /api/items work correctly
-app.use("/api/items", jewelleryRoutes);
-
-// ------------------------------------
-// PORT for Render Deployment
-// ------------------------------------
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Backend running on port ${PORT}`);
+// Default route (avoid 404 on Render)
+app.get("/", (req, res) => {
+  res.send("Jewellery Backend Running");
 });
+
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
