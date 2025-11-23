@@ -8,17 +8,17 @@ const jewelleryRoutes = require("./routes/jewellery.routes");
 
 const app = express();
 
-// ------------ CORS FIX (FINAL) -----------------
+// ------------ CORS FIX -----------------
 app.use(
   cors({
-    origin: "*", // allow ALL for now to test
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 
+// Static files
 app.use(express.static("public"));
-
 
 // Body parser
 app.use(bodyParser.json());
@@ -27,11 +27,16 @@ app.use(bodyParser.json());
 app.use("/api/daily-rate", dailyRateRoutes);
 app.use("/api", jewelleryRoutes);
 
-// Default route (avoid 404 on Render)
+// Default route
 app.get("/", (req, res) => {
   res.send("Jewellery Backend Running");
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
+// -------------------------------------
+// FIX FOR RENDER — USE DYNAMIC PORT
+// -------------------------------------
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Backend running on port ${PORT}`);
+});
