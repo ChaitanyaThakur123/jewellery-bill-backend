@@ -1,42 +1,20 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
+require("dotenv").config();
 
-// Import routes
-const dailyRateRoutes = require("./routes/dailyRate.routes");
-const jewelleryRoutes = require("./routes/jewellery.routes");
+const connectDB = require("./config/db");  // <-- ADD THIS
 
 const app = express();
+app.use(cors());
+app.use(express.json());
 
-// ------------ CORS FIX -----------------
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-  })
-);
+// Connect to MongoDB
+connectDB();  // <-- IMPORTANT
 
-// Static files
-app.use(express.static("public"));
+// Routes
+app.use("/api/items", require("./routes/item.routes"));
+app.use("/api/daily-rate", require("./routes/dailyRate.routes"));
+app.use("/api/gold-rate", require("./routes/goldRate.routes"));
 
-// Body parser
-app.use(bodyParser.json());
-
-// API Routes
-app.use("/api/daily-rate", dailyRateRoutes);
-app.use("/api", jewelleryRoutes);
-
-// Default route
-app.get("/", (req, res) => {
-  res.send("Jewellery Backend Running");
-});
-
-// -------------------------------------
-// FIX FOR RENDER — USE DYNAMIC PORT
-// -------------------------------------
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Backend running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
